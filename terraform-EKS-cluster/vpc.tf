@@ -5,20 +5,22 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {}
 
-locals {
-  cluster_name = "abhi-eks-${random_string.suffix.result}"
-}
-
 resource "random_string" "suffix" {
   length  = 8
   special = false
+  number = true
 }
+
+locals {
+  cluster_name = "k8-eks-${random_string.suffix.result}"
+}
+
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.7.0"
+  version = "5.7.1"
 
-  name                 = "abhi-eks-vpc"
+  name                 = "k8-eks-vpc"
   cidr                 = var.vpc_cidr
   azs                  = data.aws_availability_zones.available.names
   private_subnets      = ["10.0.1.0/24", "10.0.2.0/24"]
