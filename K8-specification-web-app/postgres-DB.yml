@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: postgres-deployment
+    app: web-app
+  name: postgres-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+       name: postgres-deployment
+       app: web-app
+  template:
+    metadata:
+      labels:
+         name: postgres-deployment
+         app: web-app
+    spec:
+      containers:
+      - image: postgres:latest
+        name: postgres
+        env:
+        - name: POSTGRE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-user
+        - name: MPOSTGRE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-password 
+        ports:
+        - containerPort: 5432
+          name: postgres
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: db-data
+      volumes:
+      - name: db-data
+        hostPath:
+           path: /data
+           type: Directory
