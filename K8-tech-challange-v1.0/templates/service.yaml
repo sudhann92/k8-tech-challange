@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "K8-tech-challange.fullname" . }}
+  labels:
+    {{- include "K8-tech-challange.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "K8-tech-challange.selectorLabels" . | nindent 4 }}
