@@ -5,11 +5,11 @@ metadata:
     app: web-app-service
   name: web-app-service
 spec:
-  type: NodePort
+  type: LoadBalancer #NodePort
   ports:
   - name: "web-port-service"
-    port: 80
+    port: 443
     targetPort: 80
-    nodePort: 31000
+    #nodePort: 31000
   selector:
     app: web-app
