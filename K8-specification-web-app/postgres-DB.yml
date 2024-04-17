@@ -46,7 +46,5 @@ spec:
           name: db-data
       volumes:
       - name: db-data
-      #create the /data directory in the host machine before depolying the DB yaml
-        hostPath:
-           path: /data
-           type: Directory
+        persistentVolumeClaim:
+            claimName: postgres-data-pvc        
