@@ -1,0 +1,15 @@
+# AWS Load Balancer Controller configuration
+awsLoadBalancerController:
+  enabled: true
+  autoDiscoverAwsRegion: true
+  autoDiscoverAwsVpcID: true
+  clusterName: true
+  serviceAccount:
+        create: true
+        name: aws-load-balancer-controller
+
+
+
+# Kube Prometheus Stack configuration
+kubePrometheusStack:
+  enabled: true

@@ -15,7 +15,7 @@ spec:
         app: web-app
     spec:
       containers:
-      - image: nginxdemos/hello #kodekloud/examplevotingapp_vote:v1
+      - image: nginxdemos/hello
         name: web-app
         resources:
           requests:
