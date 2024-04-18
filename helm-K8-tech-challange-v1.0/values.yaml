@@ -11,7 +11,7 @@ webServer:
   replicaCount: 3
   image:
     repository: nginxdemos/hello
-    tag: 1.21.3
+    tag: latest
     pullPolicy: IfNotPresent
   resources:
     requests:

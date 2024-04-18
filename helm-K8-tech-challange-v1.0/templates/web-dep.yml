@@ -15,7 +15,7 @@ spec:
         app: {{ .Values.webServer.podLabels.app }}
     spec:
       containers:
-      - image: {{ .Values.webServer.image.repository}}:{{ .Values.webServer.image.tag}}
+      - image: {{ .Values.webServer.image.repository}}:{{ .Values.webServer.image.tag }}
         name: web-app
         {{- if .Values.webServer.resources }}
         resources:
