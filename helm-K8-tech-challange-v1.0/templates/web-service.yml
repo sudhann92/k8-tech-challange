@@ -14,7 +14,7 @@ spec:
   ports:
   - name: "web-port-service"
     port: {{ .Values.webServer.service.port }}
-    targetPort: {{ .Values.webServer.service.targetport }}
+    targetPort: {{ .Values.webServer.service.targetPort }}
     #nodePort: 31000
   selector:
     app: {{ .Values.webServer.podLabels.app }}

@@ -22,7 +22,7 @@ spec:
           {{ toYaml .Values.webServer.resources }} 
         {{- end }}    
         ports:
-        - containerPort: {{ .Values.webServer.service.targetport }}
+        - containerPort: {{ .Values.webServer.service.targetPort }}
 
 
 #Example:
