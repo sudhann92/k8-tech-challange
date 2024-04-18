@@ -46,12 +46,12 @@ postgresql:
   postgresqlPassword: examplePassword
   postgresqlDatabase: mydatabase
   volumeMounts:
-    - mountPath: /var/lib/postgresql/data
+      mountPath: /var/lib/postgresql/data
       name: db-data
   volumes:
-    - name: db-data
+      name: db-data
       persistentVolumeClaim:
-            claimName: postgres-data-pvc 
+      claimName: postgres-data-pvc 
   persistence:
     enabled: true
     size: 1Gi

@@ -43,10 +43,15 @@ spec:
           name: postgres
         {{- if .Values.postgresql.volumeMounts }}
         volumeMounts:
-            {{ toYaml .Values.postgresql.volumeMounts | nindent 12 }}
+            #{{ toYaml .Values.postgresql.volumeMounts | nindent 12 }}
+            - name: {{ .Values.postgresql.volumeMount.name }}
+              mountPath: {{ .Values.postgresql.volumeMount.mountPath}}
           {{- end }}
       {{- if .Values.volumes }}
       volumes:
-           {{ toYaml .Values.postgresql.volumes | nindent 12 }}
+           #{{ toYaml .Values.postgresql.volumes | nindent 12 }}
+           - name: {{ .Values.postgresql.volumes.name }}
+             persistentVolumeClaim: 
+                claimName: {{ .Values.postgresql.persistanceclaim.storage}} 
           {{- end }}   
      
