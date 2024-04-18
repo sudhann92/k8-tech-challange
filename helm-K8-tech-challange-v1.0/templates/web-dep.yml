@@ -2,30 +2,33 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: web-app
-  name: web-app
+    app: {{ .Values.webServer.podLabels.app }}
+  name: web-app-{{ .Release.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount}}
   selector:
     matchLabels:
-      app: web-app
+      app: {{ .Values.webServer.podLabels.app }}
   template:
     metadata:
       labels:
-        app: web-app
+        app: {{ .Values.webServer.podLabels.app }}
     spec:
       containers:
-      - image: nginxdemos/hello #kodekloud/examplevotingapp_vote:v1
+      - image: {{ .Values.webServer.image.repository}}:{{ .Values.webServer.image.tag}}
         name: web-app
+        {{- if .Values.webServer.resources }}
         resources:
+          #{{ toYaml .Values.webServer.resources }}
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: {{ .Values.webServer.resources.requests.cpu }}
+            memory: {{ .Values.webServer.resources.requests.memory }}
           limits:
-            cpu: 200m
-            memory: 256Mi        
+            cpu: {{ .Values.webServer.resources.limits.cpu }}
+            memory: {{ .Values.webServer.resources.limits.memory }}          
+        {{- end }}    
         ports:
-        - containerPort: 80
+        - containerPort: {{ .Values.webServer.service.targetPort }}
 
 
 #Example:

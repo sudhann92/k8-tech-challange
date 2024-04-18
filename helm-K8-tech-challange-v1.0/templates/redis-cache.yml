@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment-{{ .Release.Name }}
+  labels:
+    name: {{ .Values.redis.podLabels.name }}
+    app: {{ .Values.webServer.podLabels.app }}
+spec:
+  replicas: {{ .Values.replicaCount}}
+  selector:
+    matchLabels: 
+      name: {{ .Values.redis.podLabels.name }}
+      app: {{ .Values.webServer.podLabels.app }}
+
+  template:
+    metadata:
+      name: redis-deployment-pod
+      labels:
+         name: {{ .Values.redis.podLabels.name }}
+         app: {{ .Values.webServer.podLabels.app }}
+    spec:
+  #used affinity to run the pod in specific node .condition matached the key and value with nodes and run the pod
+      affinity:
+         nodeAffinity:
+           requiredDuringSchedulingIgnoredDuringExecution:
+             nodeSelectorTerms:
+             - matchExpressions:
+               - key: {{ .Values.redis.affinity.nodeAffinity.key }}
+                 operator: In
+                 values:
+                  - {{ .Values.redis.affinity.nodeAffinity.values }}
+      containers:
+         - name: redis-app
+           image: redis:alpine
+           ports:
+             - containerPort: 6379
+           volumeMounts:
+             - name: redis-data
+               mountPath: /redis-data
+           {{- if .Values.redis.resources }}
+           resources:
+            #{{ toYaml .Values.redis.resources | nindent 12 }}
+            requests:
+              cpu: {{ .Values.redis.resources.requests.cpu }}
+              memory: {{ .Values.redis.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.redis.resources.limits.cpu }}
+              memory: {{ .Values.redis.resources.limits.memory }}             
+           {{- end }}
+      volumes:
+         - name: redis-data
+           emptyDir:
+             sizeLimit: 500Mi

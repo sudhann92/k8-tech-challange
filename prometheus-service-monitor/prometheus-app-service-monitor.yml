@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: web-service-monitoring
+  labels:
+    team: frontend
+spec:
+  selector:
+    matchLabels:
+      app: web-app
+  endpoints:
+  - port: 80

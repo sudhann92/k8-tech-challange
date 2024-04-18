@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: {{ .Values.postgresql.podLabels.name }}
+    app: web-app
+  name: postgres-db-{{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount}}
+  selector:
+    matchLabels:
+       name: {{ .Values.postgresql.podLabels.name }}
+       app: {{ .Values.webServer.podLabels.app }}
+  template:
+    metadata:
+      labels:
+         name: {{ .Values.postgresql.podLabels.name }}
+         app: {{ .Values.webServer.podLabels.app }}
+    spec:
+      containers:
+      - image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
+        name: postgres
+        env:
+        - name: POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret-{{ .Release.Name }}
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret-{{ .Release.Name }}
+              key: postgres-password
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              # The ConfigMap containing the value you want to assign to POSTGRES_DB
+              name: postgres-config-{{ .Release.Name }}
+              # Specify the key associated with the value
+              key: POSTGRES_DB   
+        ports:
+        - containerPort: 5432
+          name: postgres
+        {{- if .Values.postgresql.volumeMounts }}
+        volumeMounts:
+            #{{ toYaml .Values.postgresql.volumeMounts | nindent 12 }}
+            - name: {{ .Values.postgresql.volumeMount.name }}
+              mountPath: {{ .Values.postgresql.volumeMount.mountPath}}
+          {{- end }}
+      {{- if .Values.volumes }}
+      volumes:
+           #{{ toYaml .Values.postgresql.volumes | nindent 12 }}
+           - name: {{ .Values.postgresql.volumes.name }}
+             persistentVolumeClaim: 
+                claimName: {{ .Values.postgresql.persistanceclaim.storage}} 
+          {{- end }}   
+     

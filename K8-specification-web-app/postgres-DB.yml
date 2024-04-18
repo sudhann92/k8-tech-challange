@@ -21,16 +21,23 @@ spec:
       - image: postgres:latest
         name: postgres
         env:
-        - name: POSTGRE_USERNAME
+        - name: POSTGRES_USERNAME
           valueFrom:
             secretKeyRef:
               name: postgres-secret
               key: postgres-user
-        - name: MPOSTGRE_PASSWORD
+        - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: postgres-secret
-              key: postgres-password 
+              key: postgres-password
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              # The ConfigMap containing the value you want to assign to POSTGRES_DB
+              name: postgres-config
+              # Specify the key associated with the value
+              key: POSTGRES_DB   
         ports:
         - containerPort: 5432
           name: postgres
@@ -39,6 +46,5 @@ spec:
           name: db-data
       volumes:
       - name: db-data
-        hostPath:
-           path: /data
-           type: Directory
+        persistentVolumeClaim:
+            claimName: postgres-data-pvc        

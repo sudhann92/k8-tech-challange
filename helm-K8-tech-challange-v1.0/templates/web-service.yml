@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web-app-service
+  name: web-app-service-{{ .Release.Name }}
+  {{- if .Values.webServer.service.annotations }}
+  annotations:
+  {{ toString .Values.webServer.service.annotations | nindent 4 }} 
+  {{- end }}  
+  
+spec:
+  type: {{ .Values.webServer.service.type }} #NodePort
+  ports:
+  - name: "web-port-service"
+    port: {{ .Values.webServer.service.port }}
+    targetPort: {{ .Values.webServer.service.targetPort }}
+    #nodePort: 31000
+  selector:
+    app: {{ .Values.webServer.podLabels.app }}
