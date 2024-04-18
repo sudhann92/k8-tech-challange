@@ -3,10 +3,10 @@ kind: Service
 metadata:
   labels:
     app: web-app-service
-  name: web-app-service-{{ .Release.version }}
+  name: web-app-service-{{ .Release.Name }}
   {{- if .Values.webServer.service.annotations }}
   annotations:
-  {{ .Values.webServer.service.annotations | nindent 4 }} 
+  {{ toString .Values.webServer.service.annotations | nindent 4 }} 
   {{- end }}  
   
 spec:

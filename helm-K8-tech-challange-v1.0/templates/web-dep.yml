@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: {{ .Values.webServer.podLabels.app }}
-  name: web-app-{{ .Release.version }}
+  name: web-app-{{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount}}
   selector:

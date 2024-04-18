@@ -4,7 +4,7 @@ metadata:
   labels:
     name: {{ .Values.postgresql.podLabels.name }}
     app: web-app
-  name: postgres-db-{{ .Release.version }}
+  name: postgres-db-{{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount}}
   selector:
@@ -24,18 +24,18 @@ spec:
         - name: POSTGRES_USERNAME
           valueFrom:
             secretKeyRef:
-              name: postgres-secret-{{ .Release.version }}
+              name: postgres-secret-{{ .Release.Name }}
               key: postgres-user
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: postgres-secret-{{ .Release.version }}
+              name: postgres-secret-{{ .Release.Name }}
               key: postgres-password
         - name: POSTGRES_DB
           valueFrom:
             configMapKeyRef:
               # The ConfigMap containing the value you want to assign to POSTGRES_DB
-              name: postgres-config-{{ .Release.version }}
+              name: postgres-config-{{ .Release.Name }}
               # Specify the key associated with the value
               key: POSTGRES_DB   
         ports:
@@ -43,10 +43,10 @@ spec:
           name: postgres
         {{- if .Values.postgresql.volumeMounts }}
         volumeMounts:
-            {{- toYaml .Values.postgresql.volumeMounts | nindent 12 }}
+            {{ toYaml .Values.postgresql.volumeMounts | nindent 12 }}
           {{- end }}
-      {{ - if .Values.volumes }}
+      {{- if .Values.volumes }}
       volumes:
-           {{- toYaml .Values.postgresql.volumes | nindent 12 }}
+           {{ toYaml .Values.postgresql.volumes | nindent 12 }}
           {{- end }}   
      

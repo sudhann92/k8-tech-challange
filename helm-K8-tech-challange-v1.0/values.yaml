@@ -21,7 +21,7 @@ webServer:
       cpu: 200m
       memory: 256Mi
   service:
-    annotations:
+    annotations: |
       service.beta.kubernetes.io/aws-load-balancer-type: nlb
       service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
       service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:region:411331341867:certificate/certificate-id"

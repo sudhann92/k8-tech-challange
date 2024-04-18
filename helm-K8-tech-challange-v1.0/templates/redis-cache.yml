@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis-deployment-{{ .Release.version }}
+  name: redis-deployment-{{ .Release.Name }}
   labels:
     name: {{ .Values.redis.podLabels.name }}
     app: {{ .Values.webServer.podLabels.app }}

@@ -5,12 +5,12 @@ items:
  - apiVersion: autoscaling/v2
    kind: HorizontalPodAutoscaler
    metadata:
-      name: redis-deployment-hpa-{{ .Release.version }}
+      name: redis-deployment-hpa-{{ .Release.Name }}
    spec:
       scaleTargetRef:
         apiVersion: apps/v1
         kind: Deployment
-        name: redis-deployment-pod-{{ .Release.version }}
+        name: redis-deployment-pod-{{ .Release.Name }}
       minReplicas: {{ .Values.autoscaling.redis.minReplicas }}
       maxReplicas: {{ .Values.autoscaling.redis.maxReplicas }}
       metrics:
@@ -31,12 +31,12 @@ items:
  - apiVersion: autoscaling/v2
    kind: HorizontalPodAutoscaler
    metadata:
-      name: web-app-hpa-{{ .Release.version }}
+      name: web-app-hpa-{{ .Release.Name }}
    spec:
       scaleTargetRef:
         apiVersion: apps/v1
         kind: Deployment
-        name:  web-app-{{ .Release.version }}
+        name:  web-app-{{ .Release.Name }}
       minReplicas: {{ .Values.autoscaling.webServer.minReplicas }}
       maxReplicas: {{ .Values.autoscaling.webServer.maxReplicas }}
       metrics:
