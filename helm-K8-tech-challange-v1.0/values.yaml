@@ -49,9 +49,7 @@ postgresql:
       mountPath: /var/lib/postgresql/data
       name: db-data
   volumes:
-      name: db-data
-      persistentVolumeClaim:
-      claimName: postgres-data-pvc 
+      name: db-data 
   persistence:
     enabled: true
     size: 1Gi

@@ -4,7 +4,7 @@ metadata:
   name: postgres-data-pvc-{{ .Release.Name }}
 spec:
   storageClassName: {{ .Values.postgresql.persistence.storageClass }}
-  volumeName: postgres-db-data-pv
+  volumeName: postgres-db-data-pv-{{ .Release.Name }}
   accessModes:
     - {{ .Values.postgresql.persistence.accessModes }}
   resources:

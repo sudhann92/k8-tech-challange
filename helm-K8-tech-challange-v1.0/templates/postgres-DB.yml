@@ -41,17 +41,11 @@ spec:
         ports:
         - containerPort: 5432
           name: postgres
-        {{- if .Values.postgresql.volumeMounts }}
         volumeMounts:
-            #{{ toYaml .Values.postgresql.volumeMounts | nindent 12 }}
-            - name: {{ .Values.postgresql.volumeMounts.name }}
-              mountPath: {{ .Values.postgresql.volumeMounts.mountPath }}
-          {{- end }}
-      {{- if .Values.volumes }}
+        - mountPath: {{ .Values.postgresql.volumeMounts.name }}
+          name: {{ .Values.postgresql.volumes.name }}
       volumes:
-           #{{ toYaml .Values.postgresql.volumes | nindent 12 }}
-           - name: {{ .Values.postgresql.volumes.name }}
-             persistentVolumeClaim: 
-                claimName: {{ .Values.postgresql.volumes.persistanceclaim.storage }} 
-          {{- end }}   
+      - name: {{ .Values.postgresql.volumes.name }}
+        persistentVolumeClaim:
+            claimName: postgres-data-pvc-{{ .Release.Name }}
      
