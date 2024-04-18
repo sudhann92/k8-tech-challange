@@ -3,21 +3,21 @@ kind: Deployment
 metadata:
   name: redis-deployment-{{ .Release.version }}
   labels:
-    name: redis-deployment
-    app: web-app
+    name: {{ .Values.redis.podLabels.name }}
+    app: {{ .Values.webServer.podLabels.app }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount}}
   selector:
     matchLabels: 
-      name: redis-deployment-pod
-      app: web-app
+      name: {{ .Values.redis.podLabels.name }}
+      app: {{ .Values.webServer.podLabels.app }}
 
   template:
     metadata:
       name: redis-deployment-pod
       labels:
-         name: redis-deployment-pod
-         app: web-app
+         name: {{ .Values.redis.podLabels.name }}
+         app: {{ .Values.webServer.podLabels.app }}
     spec:
   #used affinity to run the pod in specific node .condition matached the key and value with nodes and run the pod
       affinity:
@@ -25,10 +25,10 @@ spec:
            requiredDuringSchedulingIgnoredDuringExecution:
              nodeSelectorTerms:
              - matchExpressions:
-               - key: node-value
+               - key: {{ .Values.redis.affinity.nodeAffinity.key }}
                  operator: In
                  values:
-                  - cache
+                  - {{ .Values.redis.affinity.nodeAffinity.values }}
       containers:
          - name: redis-app
            image: redis:alpine
@@ -37,13 +37,10 @@ spec:
            volumeMounts:
              - name: redis-data
                mountPath: /redis-data
+           {{- if .Values.redis.resources }}
            resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 200m
-              memory: 256Mi
+            {{ toYaml .Values.redis.resources | nindent 12 }}
+           {{- end }}
       volumes:
          - name: redis-data
            emptyDir:

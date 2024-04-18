@@ -2,49 +2,51 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    name: postgres-deployment
+    name: {{ .Values.postgresql.podLabels.name }}
     app: web-app
   name: postgres-db-{{ .Release.version }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount}}
   selector:
     matchLabels:
-       name: postgres-deployment
-       app: web-app
+       name: {{ .Values.postgresql.podLabels.name }}
+       app: {{ .Values.webServer.podLabels.app }}
   template:
     metadata:
       labels:
-         name: postgres-deployment
-         app: web-app
+         name: {{ .Values.postgresql.podLabels.name }}
+         app: {{ .Values.webServer.podLabels.app }}
     spec:
       containers:
-      - image: postgres:latest
+      - image: {{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}
         name: postgres
         env:
         - name: POSTGRES_USERNAME
           valueFrom:
             secretKeyRef:
-              name: postgres-secret
+              name: postgres-secret-{{ .Release.version }}
               key: postgres-user
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: postgres-secret
+              name: postgres-secret-{{ .Release.version }}
               key: postgres-password
         - name: POSTGRES_DB
           valueFrom:
             configMapKeyRef:
               # The ConfigMap containing the value you want to assign to POSTGRES_DB
-              name: postgres-config
+              name: postgres-config-{{ .Release.version }}
               # Specify the key associated with the value
               key: POSTGRES_DB   
         ports:
         - containerPort: 5432
           name: postgres
+        {{- if .Values.postgresql.volumeMounts }}
         volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: db-data
+            {{- toYaml .Values.postgresql.volumeMounts | nindent 12 }}
+          {{- end }}
+      {- if .Values.volumes }}
       volumes:
-      - name: db-data
-        persistentVolumeClaim:
-            claimName: postgres-data-pvc        
+           {{- toYaml .Values.postgresql.volumes | nindent 12 }}
+          {{- end }}   
+     

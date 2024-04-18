@@ -3,10 +3,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: postgres-data-pvc-{{ .Release.version }}
 spec:
-  storageClassName: manual
+  storageClassName: {{ .Values.postgresql.persistence.storageClass }}
   volumeName: postgres-db-data-pv
   accessModes:
-    - ReadWriteMany
+    - {{ .Values.postgresql.persistence.accessModes }}
   resources:
     requests:
-      storage: 1Gi
+      storage: {{ .Values.postgresql.persistanceclaim.storage }}

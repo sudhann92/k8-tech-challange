@@ -4,6 +4,107 @@
 
 replicaCount: 1
 
+# Values for Web Server
+webServer:
+  podLabels:
+      app: web-app
+  replicaCount: 3
+  image:
+    repository: nginxdemos/hello
+    tag: 1.21.3
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  service:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+      service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:region:411331341867:certificate/certificate-id"
+      #service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing      
+  
+    type: LoadBalancer
+    port: 443
+    targetPort: 80
+
+# Values for PostgreSQL Database
+postgresql:
+  podLabels:
+    name: postgres-deployment
+  enabled: true
+  image:
+    repository: postgres
+    tag: latest
+    pullPolicy: IfNotPresent
+  postgresqlUsername: admin
+  postgresqlPassword: examplePassword
+  postgresqlDatabase: mydatabase
+  volumeMounts:
+    - mountPath: /var/lib/postgresql/data
+      name: db-data
+  volumes:
+    - name: db-data
+      persistentVolumeClaim:
+            claimName: postgres-data-pvc 
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: standard
+    accessModes: ReadWriteMany
+    hostPath:
+       path: "/data"
+  persistanceclaim:
+    storage: 1Gi 
+    
+
+# Values for Redis Cache
+redis:
+  enabled: true
+  podLabels:
+    name: redis-deployment
+  image:
+    repository: redis
+    tag: 6.2.5
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  affinity:
+    nodeAffinity:
+            key: node-type
+            operator: In
+            values: cache
+  service:
+    type: ClusterIP
+    port: 6379
+    targetPort: 6379
+
+# Autoscaling Configuration
+autoscaling:
+  webServer:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 70
+  redis:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 60
+    targetMemoryUtilizationPercentage: 80
+
+
 image:
   repository: nginx
   pullPolicy: IfNotPresent
@@ -59,18 +160,6 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
 
 # Additional volumes on the output Deployment definition.
 volumes: []
@@ -84,81 +173,3 @@ volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-
-# Values for Web Server
-webServer:
-  replicaCount: 3
-  image:
-    repository: nginx
-    tag: 1.21.3
-    pullPolicy: IfNotPresent
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
-  service:
-    type: LoadBalancer
-    port: 80
-
-# Values for PostgreSQL Database
-postgresql:
-  enabled: true
-  image:
-    repository: postgres
-    tag: 13.3
-    pullPolicy: IfNotPresent
-  postgresqlUsername: admin
-  postgresqlPassword: examplePassword
-  postgresqlDatabase: mydatabase
-  persistence:
-    enabled: true
-    size: 1Gi
-    storageClass: standard
-
-# Values for Redis Cache
-redis:
-  enabled: true
-  image:
-    repository: redis
-    tag: 6.2.5
-    pullPolicy: IfNotPresent
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
-  affinity:
-    nodeAffinity:
-            key: node-type
-            operator: In
-            values: cache
-  service:
-    type: ClusterIP
-    port: 6379
-
-# Autoscaling Configuration
-autoscaling:
-  webServer:
-    enabled: true
-    minReplicas: 2
-    maxReplicas: 5
-    targetCPUUtilizationPercentage: 50
-    targetMemoryUtilizationPercentage: 70
-  redis:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 60
-    targetMemoryUtilizationPercentage: 80

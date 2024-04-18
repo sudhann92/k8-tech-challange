@@ -8,6 +8,6 @@ spec:
     - port: 5432
       targetPort: 5432
   selector:
-         name: postgres-deployment
-         app: web-app
+         name: {{ .Values.postgresql.podLabels.name }}
+         app: {{ .Values.webServer.podLabels.app }}
      
