@@ -19,7 +19,6 @@ spec:
         name: web-app
         {{- if .Values.webServer.resources }}
         resources:
-          #{{ toYaml .Values.webServer.resources }}
           requests:
             cpu: {{ .Values.webServer.resources.requests.cpu }}
             memory: {{ .Values.webServer.resources.requests.memory }}
