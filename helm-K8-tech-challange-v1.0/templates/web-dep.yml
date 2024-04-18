@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: web-app
-  name: web-app
+  name: web-app-{{ .Release.version }}
 spec:
   replicas: 1
   selector:

@@ -71,12 +71,6 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
 volumes: []
@@ -96,3 +90,75 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+
+# Values for Web Server
+webServer:
+  replicaCount: 3
+  image:
+    repository: nginx
+    tag: 1.21.3
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  service:
+    type: LoadBalancer
+    port: 80
+
+# Values for PostgreSQL Database
+postgresql:
+  enabled: true
+  image:
+    repository: postgres
+    tag: 13.3
+    pullPolicy: IfNotPresent
+  postgresqlUsername: admin
+  postgresqlPassword: examplePassword
+  postgresqlDatabase: mydatabase
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: standard
+
+# Values for Redis Cache
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: 6.2.5
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  affinity:
+    nodeAffinity:
+            key: node-type
+            operator: In
+            values: cache
+  service:
+    type: ClusterIP
+    port: 6379
+
+# Autoscaling Configuration
+autoscaling:
+  webServer:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 70
+  redis:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 60
+    targetMemoryUtilizationPercentage: 80
