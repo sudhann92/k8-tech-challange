@@ -3,7 +3,9 @@ awsLoadBalancerController:
   enabled: true
   autoDiscoverAwsRegion: true
   autoDiscoverAwsVpcID: true
-  clusterName: true
+  clusterName: name of the clusterName
+  region: <region>
+  vpcId: <your-vpc-id>
   serviceAccount:
         create: true
         name: aws-load-balancer-controller

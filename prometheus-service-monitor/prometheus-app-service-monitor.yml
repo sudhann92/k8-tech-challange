@@ -10,3 +10,4 @@ spec:
       app: web-app
   endpoints:
   - port: 80
+    path: /metrics
