@@ -19,12 +19,7 @@ spec:
         name: web-app
         {{- if .Values.webServer.resources }}
         resources:
-          requests:
-            cpu: {{ .Values.webServer.resources.requests.cpu }}
-            memory: {{ .Values.webServer.resources.requests.memory }}
-          limits:
-            cpu: {{ .Values.webServer.resources.limits.cpu }}
-            memory: {{ .Values.webServer.resources.limits.memory }}          
+{{ toYaml .Values.webServer.resources | indent 12 }}          
         {{- end }}    
         ports:
         - containerPort: {{ .Values.webServer.service.targetPort }}

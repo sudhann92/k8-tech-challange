@@ -39,12 +39,7 @@ spec:
                mountPath: /redis-data
            {{- if .Values.redis.resources }}
            resources:
-            requests:
-              cpu: {{ .Values.redis.resources.requests.cpu }}
-              memory: {{ .Values.redis.resources.requests.memory }}
-            limits:
-              cpu: {{ .Values.redis.resources.limits.cpu }}
-              memory: {{ .Values.redis.resources.limits.memory }}             
+{{ toYaml .Values.redis.resources | indent 12 }}
            {{- end }}
       volumes:
          - name: redis-data
